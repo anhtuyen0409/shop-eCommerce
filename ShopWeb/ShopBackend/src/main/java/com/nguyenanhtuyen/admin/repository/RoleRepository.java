@@ -1,4 +1,4 @@
-package com.nguyenanhtuyen.admin.user;
+package com.nguyenanhtuyen.admin.repository;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;

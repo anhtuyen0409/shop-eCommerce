@@ -7,3 +7,11 @@ li a {
 li a:hover {
     color: #AAAAAA; 
 }
+
+.navbar-nav {
+  flex-wrap: wrap;
+}
+
+.nav-item {
+	margin-right: 20px;
+}

@@ -1,4 +1,4 @@
-package com.nguyenanhtuyen.admin.user;
+package com.nguyenanhtuyen.admin.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

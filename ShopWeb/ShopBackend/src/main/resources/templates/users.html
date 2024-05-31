@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport"
 	content="width=device-width,initial-scale=1.0,minimum-scale=1.0">
-<title>Home - Shop Admin</title>
+<title>Manage users page</title>
 <link rel="stylesheet" type="text/css"
 	th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" />
 <link rel="stylesheet" type="text/css" th:href="@{/css/styles.css}" />
@@ -14,6 +14,7 @@
 </head>
 <body>
 	<div class="container-fluid">
+		<!-- header -->
 		<div>
 			<nav class="navbar navbar-expand-lg">
 				<a class="navbar-brand" th:href="@{/}"> <img
@@ -47,12 +48,47 @@
 				</div>
 			</nav>
 		</div>
+		<!-- end header -->
+
+		<!-- body -->
 		<div>
-			<h1>Shop Admin Control Panel</h1>
+			<h2>Manage users</h2>
 		</div>
 		<div>
+			<table class="table table-bordered table-striped table-hover table-responsive-xl">
+				<thead class="thead-dark">
+					<tr>
+						<th>User ID</th>
+						<th>Photos</th>
+						<th>E-mail</th>
+						<th>First Name</th>
+						<th>Last Name</th>
+						<th>Roles</th>
+						<th>Enable</th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="user : ${listUsers}">
+						<td>[[${user.id}]]</td>
+						<td>[[${user.photos}]]</td>
+						<td>[[${user.email}]]</td>
+						<td>[[${user.firstName}]]</td>
+						<td>[[${user.lastName}]]</td>
+						<td>[[${user.roles}]]</td>
+						<td>[[${user.enabled}]]</td>
+						<td>Edit &nbsp; Delete</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<!-- end body -->
+
+		<!-- footer -->
+		<div class="text-center">
 			<p>Design by Tuyen</p>
 		</div>
+		<!-- end footer -->
 	</div>
 </body>
 </html>
