@@ -15,45 +15,15 @@
 <body>
 	<div class="container-fluid">
 		<!-- header -->
-		<div>
-			<nav class="navbar navbar-expand-lg">
-				<a class="navbar-brand" th:href="@{/}"> <img
-					style="width: 100px; height: 80px" th:src="@{/images/logo.png}" />
-				</a>
-				<button class="navbar-toggler" type="button" data-toggle="collapse"
-					data-target="#topNavbar">
-					<span class="navbar-toggler-icon"></span>
-				</button>
-				<div class="collapse navbar-collapse" id="topNavbar">
-					<ul class="navbar-nav mx-auto justify-content-center">
-						<li class="nav-item"><a class="nav-link" th:href="@{/users}">Users</a></li>
-						<li class="nav-item"><a class="nav-link"
-							th:href="@{/categories}">Categories</a></li>
-						<li class="nav-item"><a class="nav-link" th:href="@{/brands}">Brands</a></li>
-						<li class="nav-item"><a class="nav-link"
-							th:href="@{/products}">Products</a></li>
-						<li class="nav-item"><a class="nav-link"
-							th:href="@{/customers}">Customers</a></li>
-						<li class="nav-item"><a class="nav-link"
-							th:href="@{/shipping}">Shipping</a></li>
-						<li class="nav-item"><a class="nav-link" th:href="@{/orders}">Orders</a></li>
-						<li class="nav-item"><a class="nav-link" th:href="@{/report}">Sales
-								Report</a></li>
-						<li class="nav-item"><a class="nav-link"
-							th:href="@{/articles}">Articles</a></li>
-						<li class="nav-item"><a class="nav-link" th:href="@{/menus}">Menus</a></li>
-						<li class="nav-item"><a class="nav-link"
-							th:href="@{/settings}">Settings</a></li>
-					</ul>
-				</div>
-			</nav>
-		</div>
+		<th:block th:include="/header"></th:block>
 		<!-- end header -->
 
 		<!-- body -->
 		<div>
-			<h2>Manage users</h2>
+			<h2>Manage Users</h2>
+			<a th:href="@{/users/create-new-user}">Create New User</a>
 		</div>
+		<div th:if="${message != null}" class="alert alert-success text-center">[[${message}]]</div>
 		<div>
 			<table class="table table-bordered table-striped table-hover table-responsive-xl">
 				<thead class="thead-dark">
@@ -85,9 +55,7 @@
 		<!-- end body -->
 
 		<!-- footer -->
-		<div class="text-center">
-			<p>Design by Tuyen</p>
-		</div>
+		<th:block th:include="/footer"></th:block>
 		<!-- end footer -->
 	</div>
 </body>
