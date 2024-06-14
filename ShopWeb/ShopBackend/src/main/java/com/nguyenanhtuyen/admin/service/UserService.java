@@ -3,11 +3,15 @@ package com.nguyenanhtuyen.admin.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.nguyenanhtuyen.admin.exception.UserNotFoundException;
 import com.nguyenanhtuyen.admin.repository.RoleRepository;
+import com.nguyenanhtuyen.admin.repository.UserPagingRepository;
 import com.nguyenanhtuyen.admin.repository.UserRepository;
 import com.nguyenanhtuyen.common.entity.Role;
 import com.nguyenanhtuyen.common.entity.User;
@@ -17,9 +21,14 @@ import jakarta.transaction.Transactional;
 @Service
 @Transactional
 public class UserService {
+	
+	public static final int USERS_PER_PAGE = 10;
 
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private UserPagingRepository userPagingRepository;
 	
 	@Autowired
 	private RoleRepository roleRepository;
@@ -29,6 +38,11 @@ public class UserService {
 	
 	public List<User> listAll() {
 		return (List<User>) userRepository.findAll();
+	}
+	
+	public Page<User> listByPage(int pageNum) {
+		Pageable pageable = PageRequest.of(pageNum - 1, USERS_PER_PAGE);
+		return userPagingRepository.findAll(pageable);
 	}
 	
 	public List<Role> listRoles() {
