@@ -18,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.nguyenanhtuyen.admin.exception.UserNotFoundException;
 import com.nguyenanhtuyen.admin.exporter.UserCsvExporter;
+import com.nguyenanhtuyen.admin.exporter.UserExcelExporter;
 import com.nguyenanhtuyen.admin.service.UserService;
 import com.nguyenanhtuyen.admin.util.FileUploadUtil;
 import com.nguyenanhtuyen.common.entity.Role;
@@ -129,5 +130,12 @@ public class UserController {
 		List<User> listUsers = userService.listAll();
 		UserCsvExporter exporter = new UserCsvExporter();
 		exporter.export(listUsers, response);
+	}
+	
+	@GetMapping("/users/export/excel")
+	public void exportToExcel(HttpServletResponse response) throws IOException {
+		List<User> listUsers = userService.listAll();
+		UserExcelExporter excelExporter = new UserExcelExporter();
+		excelExporter.export(listUsers, response);
 	}
 }
