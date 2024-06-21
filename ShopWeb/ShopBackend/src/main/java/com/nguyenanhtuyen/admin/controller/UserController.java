@@ -17,10 +17,13 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.nguyenanhtuyen.admin.exception.UserNotFoundException;
+import com.nguyenanhtuyen.admin.exporter.UserCsvExporter;
 import com.nguyenanhtuyen.admin.service.UserService;
 import com.nguyenanhtuyen.admin.util.FileUploadUtil;
 import com.nguyenanhtuyen.common.entity.Role;
 import com.nguyenanhtuyen.common.entity.User;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
 public class UserController {
@@ -119,5 +122,12 @@ public class UserController {
 			redirectAttributes.addFlashAttribute("message", ex.getMessage());
 		}
 		return "redirect:/users";
+	}
+	
+	@GetMapping("/users/export/csv")
+	public void exportToCSV(HttpServletResponse response) throws IOException {
+		List<User> listUsers = userService.listAll();
+		UserCsvExporter exporter = new UserCsvExporter();
+		exporter.export(listUsers, response);
 	}
 }
