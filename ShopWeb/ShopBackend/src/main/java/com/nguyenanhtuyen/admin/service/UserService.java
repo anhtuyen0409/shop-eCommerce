@@ -41,6 +41,10 @@ public class UserService {
 		return (List<User>) userRepository.findAll();
 	}
 	
+	public User getByEmail(String email) {
+		return userRepository.getUserByEmail(email);
+	}
+	
 	public Page<User> listByPage(int pageNum, String sortField, String sortDir, String keyword) {
 		Sort sort = Sort.by(sortField);
 		sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
@@ -67,6 +71,23 @@ public class UserService {
 		} else {
 			encodePassword(user);
 		}
+		return userRepository.save(user);
+	}
+	
+	public User updateAccount(User userInForm) {
+		
+		User user = userRepository.findById(userInForm.getId()).get();
+		
+		if(!userInForm.getPassword().isEmpty()) {
+			user.setPassword(userInForm.getPassword());
+			encodePassword(user);
+		}
+		if(userInForm.getPhotos() != null) {
+			user.setPhotos(userInForm.getPhotos());
+		}
+		user.setFirstName(userInForm.getFirstName());
+		user.setLastName(userInForm.getLastName());
+		
 		return userRepository.save(user);
 	}
 	
