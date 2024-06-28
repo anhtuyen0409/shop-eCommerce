@@ -19,7 +19,9 @@
 	<div class="container-fluid">
 		<th:block th:include="/header"></th:block>
 		<div>
-			<h1>Shop Admin Control Panel</h1>
+			<h2>Shop Admin Control Panel</h2>
+			Welcome <a th:href="@{/account}" sec:authentication="principal.fullname"></a>
+			<span sec:authentication="principal.authorities"></span>
 		</div>
 		<th:block th:include="/footer"></th:block>
 	</div>
