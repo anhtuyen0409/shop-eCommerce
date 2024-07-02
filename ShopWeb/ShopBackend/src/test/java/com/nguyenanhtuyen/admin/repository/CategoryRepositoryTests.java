@@ -2,6 +2,7 @@ package com.nguyenanhtuyen.admin.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,9 @@ public class CategoryRepositoryTests {
 
 	@Autowired
 	private CategoryRepository categoryRepository;
+	
+	@Autowired
+	private CategoryPagingRepository categoryPagingRepository;
 	
 	@Test
 	public void testCreateRootCategory() {
@@ -77,5 +81,27 @@ public class CategoryRepositoryTests {
 			System.out.println(subCategory.getName());
 			printChildren(subCategory, newSubLevel);
 		}
+	}
+	
+	@Test
+	public void testListRootCategories() {
+		List<Category> rootCategories = categoryPagingRepository.findRootCategories();
+		rootCategories.forEach(category -> System.out.println(category.getName()));
+	}
+	
+	@Test
+	public void testFindByName() {
+		String name = "Computers";
+		Category category = categoryPagingRepository.findByName(name);
+		assertThat(category).isNotNull();
+		assertThat(category.getName()).isEqualTo(name);
+	}
+	
+	@Test
+	public void testFindByAlias() {
+		String alias = "electronics";
+		Category category = categoryPagingRepository.findByAlias(alias);
+		assertThat(category).isNotNull();
+		assertThat(category.getAlias()).isEqualTo(alias);
 	}
 }
