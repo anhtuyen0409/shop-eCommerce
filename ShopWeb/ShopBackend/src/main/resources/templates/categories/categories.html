@@ -22,18 +22,17 @@
 		<!-- body -->
 		<div>
 			<h2>Manage Categories</h2>
-			<a th:href="@{/categories/create-new-category}">Create New Category</a>
-			&nbsp;|&nbsp;
-			<a th:href="@{/categories/export/csv}">Export to CSV</a>
-			&nbsp;|&nbsp;
-			<a th:href="@{/categories/export/excel}">Export to Excel</a>
-			&nbsp;|&nbsp;
-			<a th:href="@{/categories/export/pdf}">Export to PDF</a>
+			<a th:href="@{/categories/create-new-category}">Create New
+				Category</a> &nbsp;|&nbsp; <a th:href="@{/categories/export/csv}">Export
+				to CSV</a> &nbsp;|&nbsp; <a th:href="@{/categories/export/excel}">Export
+				to Excel</a> &nbsp;|&nbsp; <a th:href="@{/categories/export/pdf}">Export
+				to PDF</a>
 		</div>
 		<div th:if="${message != null}"
 			class="alert alert-success text-center">[[${message}]]</div>
 		<div>
-			<form th:action="@{/users/page/1}" class="form-inline m-3">
+			<form th:action="@{/categories/page/1}" class="form-inline m-3">
+				<input type="hidden" name="sortDir" th:value="${sortDir}" />
 				Filter:&nbsp;
 				<input type="search" name="keyword" th:value="${keyword}" class="form-control" required />
 				&nbsp;&nbsp;
@@ -49,7 +48,11 @@
 					<tr>
 						<th>ID</th>
 						<th>Category Image</th>
-						<th>Category Name</th>
+						<th><a class="text-white"
+							th:href="@{'/categories?sortDir=' + ${reverseSortDir}}">Category
+								Name</a> <span
+							th:class="${reverseSortDir == 'desc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}"></span>
+						</th>
 						<th>Alias</th>
 						<th>Enabled</th>
 						<th>Action</th>
@@ -58,9 +61,8 @@
 				<tbody>
 					<tr th:each="category : ${listCategories}">
 						<td>[[${category.id}]]</td>
-						<td>
-							<img th:src="@{${category.imagePath}}" class="img-fluid" style="width: 100px;" />
-						</td>
+						<td><img th:src="@{${category.imagePath}}" class="img-fluid"
+							style="width: 100px; height: 80px;" /></td>
 						<td>[[${category.name}]]</td>
 						<td>[[${category.alias}]]</td>
 						<td><a th:if="${category.enabled == true}"
@@ -69,18 +71,92 @@
 							class="fas fa-xmark-circle fa-2x icon-red" href=""></a></td>
 						<td><a class="fas fa-edit fa-2x icon-dark"
 							th:href="@{'/categories/update/' + ${category.id}}"
-							title="Update this category"></a> <a
-							class="fas fa-trash fa-2x icon-dark link-delete"
-							th:href="@{'/categories/delete/' + ${category.id}}" th:categoryId="${category.id}"
-							title="Delete this category"></a></td>
+							title="Update this category"></a> <th:block
+								th:if="${category.hasChildren == false}">
+								<a class="fas fa-trash fa-2x icon-dark link-delete"
+									th:href="@{'/categories/delete/' + ${category.id}}"
+									th:categoryId="${category.id}" title="Delete this category"></a>
+							</th:block></td>
 					</tr>
 				</tbody>
 			</table>
 		</div>
+		<!-- start paging -->
+		<div class="text-center m-1" th:if="${totalItems > 0}">
+			<span>Showing 4 top-level categories & sub-categories</span>
+		</div>
+		<div class="text-center m-1" th:unless="${totalItems > 0}">
+			<span>No categories found</span>
+		</div>
+		<div th:if="${totalItems > 0}">
+			<nav>
+				<ul class="pagination justify-content-center">
+					<li
+						th:class="${currentPage > 1 ? 'page-item' : 'page-item disabled'}"><a
+						class="page-link" th:href="@{'/categories/page/1?sortDir=' + ${sortDir}}">First</a></li>
+					<li
+						th:class="${currentPage > 1 ? 'page-item' : 'page-item disabled'}"><a
+						class="page-link" th:href="@{'/categories/page/' + ${currentPage - 1} + '?sortDir=' + ${sortDir}}">Previous</a></li>
+					<li
+						th:class="${currentPage != i ? 'page-item' : 'page-item active'}"
+						th:each="i : ${#numbers.sequence(1, totalPages)}">
+						<a class="page-link" th:href="@{'/categories/page/' + ${i} + '?sortDir=' + ${sortDir}}">[[${i}]]</a>
+					</li>
+					<li
+						th:class="${currentPage == totalPages ? 'page-item disabled' : 'page-item'}"><a
+						class="page-link" th:href="@{'/categories/page/' + ${currentPage + 1} + '?sortDir=' + ${sortDir}}">Next</a></li>
+					<li
+						th:class="${currentPage == totalPages ? 'page-item disabled' : 'page-item'}"><a
+						class="page-link" th:href="@{'/categories/page/' + ${totalPages} + '?sortDir=' + ${sortDir}}">Last</a></li>
+				</ul>
+			</nav>
+		</div>
+		<!-- end paging -->
 		<!-- end body -->
+		<!-- start dialog delete confirm-->
+		<div class="modal fade text-center" id="confirmModal">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title">Delete Confirmation</h4>
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+					</div>
+					<div class="modal-body">
+						<span id="confirmText"></span>
+					</div>
+					<div class="modal-footer">
+						<a class="btn btn-success" href="" id="yesButton">Yes</a>
+						<button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- end dialog delete confirm -->
 		<!-- footer -->
 		<th:block th:include="/footer"></th:block>
 		<!-- end footer -->
 	</div>
+	<script type="text/javascript">
+		$(document).ready(
+				function() {
+					$(".link-delete")
+							.on(
+									"click",
+									function(e) {
+										e.preventDefault();
+										link = $(this);
+										categoryId = link.attr("categoryId");
+										$("#yesButton").attr("href",
+												link.attr("href"));
+										$("#confirmText").text(
+												"Are you sure delete this category with ID "
+														+ categoryId + "?");
+										$("#confirmModal").modal();
+									});
+				});
+		function clearFilter() {
+			window.location = "[[@{/categories}]]";
+		}
+	</script>
 </body>
 </html>
