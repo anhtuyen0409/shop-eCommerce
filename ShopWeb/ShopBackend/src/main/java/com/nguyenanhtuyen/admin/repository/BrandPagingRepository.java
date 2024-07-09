@@ -6,4 +6,5 @@ import com.nguyenanhtuyen.common.entity.Brand;
 
 public interface BrandPagingRepository extends PagingAndSortingRepository<Brand, Integer> {
 
+	public Long countById(Integer id);
 }

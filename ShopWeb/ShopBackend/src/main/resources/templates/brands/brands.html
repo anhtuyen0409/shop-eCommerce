@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport"
+	content="width=device-width,initial-scale=1.0,minimum-scale=1.0">
+<title>Manage brands page</title>
+<link rel="stylesheet" type="text/css"
+	th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" />
+<link rel="stylesheet" type="text/css" th:href="@{/css/styles.css}" />
+<link rel="stylesheet" type="text/css" th:href="@{/fontawesome/all.css}" />
+<script type="text/javascript" th:src="@{/webjars/jquery/jquery.min.js}"></script>
+<script type="text/javascript"
+	th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+</head>
+<body>
+	<div class="container-fluid">
+		<!-- header -->
+		<th:block th:include="/header"></th:block>
+		<!-- end header -->
+
+		<!-- body -->
+		<div>
+			<h2>Manage Brands</h2>
+			<a th:href="@{/brands/create-new-brand}">Create New Brand</a> 
+			&nbsp;|&nbsp; 
+			<a th:href="@{/brands/export/csv}">Export to CSV</a> 
+			&nbsp;|&nbsp; 
+			<a th:href="@{/brands/export/excel}">Export to Excel</a> 
+			&nbsp;|&nbsp; 
+			<a th:href="@{/brands/export/pdf}">Export to PDF</a>
+		</div>
+		<div th:if="${message != null}"
+			class="alert alert-success text-center">[[${message}]]</div>
+		<div>
+			<form th:action="@{/brands/page/1}" class="form-inline m-3">
+				<input type="hidden" name="sortDir" th:value="${sortDir}" />
+				Filter:&nbsp;
+				<input type="search" name="keyword" th:value="${keyword}" class="form-control" required />
+				&nbsp;&nbsp;
+				<input type="submit" value="Search" class="btn btn-primary" />
+				&nbsp;&nbsp;
+				<input type="button" value="Clear" class="btn btn-secondary" onclick="clearFilter()" />
+			</form>
+		</div>
+		<div>
+			<table
+				class="table table-bordered table-striped table-hover table-responsive-xl">
+				<thead class="thead-dark">
+					<tr>
+						<th>ID</th>
+						<th>Logo</th>
+						<th><a class="text-white"
+							th:href="@{'/brands?sortDir=' + ${reverseSortDir}}">Brand Name</a> 
+							<span th:class="${reverseSortDir == 'desc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}"></span>
+						</th>
+						<th>Categories</th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="brand : ${listBrands}">
+						<td>[[${brand.id}]]</td>
+						<td><img th:src="@{${brand.logoPath}}" class="img-fluid"
+							style="width: 100px; height: 80px;" /></td>
+						<td>[[${brand.name}]]</td>
+						<td>
+							<th:block th:each="category : ${brand.categories}">
+								<span class="badge badge-secondary" th:text="${category.name}"></span>
+							</th:block>
+						</td>
+						<td>
+							<a class="fas fa-edit fa-2x icon-dark" th:href="@{'/brands/update/' + ${brand.id}}"
+								title="Update this brand"></a> 
+							<a class="fas fa-trash fa-2x icon-dark link-delete" th:href="@{'/brands/delete/' + ${brand.id}}"
+								th:brandId="${brand.id}" title="Delete this brand"></a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<!-- start paging -->
+		<div class="text-center m-1" th:if="${totalItems > 0}">
+			<span>Showing brands</span>
+		</div>
+		<div class="text-center m-1" th:unless="${totalItems > 0}">
+			<span>No brands found</span>
+		</div>
+		<div th:if="${totalItems > 0}">
+			<nav>
+				<ul class="pagination justify-content-center">
+					<li
+						th:class="${currentPage > 1 ? 'page-item' : 'page-item disabled'}"><a
+						class="page-link" th:href="@{'/brands/page/1?sortDir=' + ${sortDir}}">First</a></li>
+					<li
+						th:class="${currentPage > 1 ? 'page-item' : 'page-item disabled'}"><a
+						class="page-link" th:href="@{'/brands/page/' + ${currentPage - 1} + '?sortDir=' + ${sortDir}}">Previous</a></li>
+					<li
+						th:class="${currentPage != i ? 'page-item' : 'page-item active'}"
+						th:each="i : ${#numbers.sequence(1, totalPages)}">
+						<a class="page-link" th:href="@{'/brands/page/' + ${i} + '?sortDir=' + ${sortDir}}">[[${i}]]</a>
+					</li>
+					<li
+						th:class="${currentPage == totalPages ? 'page-item disabled' : 'page-item'}"><a
+						class="page-link" th:href="@{'/brands/page/' + ${currentPage + 1} + '?sortDir=' + ${sortDir}}">Next</a></li>
+					<li
+						th:class="${currentPage == totalPages ? 'page-item disabled' : 'page-item'}"><a
+						class="page-link" th:href="@{'/brands/page/' + ${totalPages} + '?sortDir=' + ${sortDir}}">Last</a></li>
+				</ul>
+			</nav>
+		</div>
+		<!-- end paging -->
+		<!-- end body -->
+		<!-- start dialog delete confirm-->
+		<div class="modal fade text-center" id="confirmModal">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title">Delete Confirmation</h4>
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+					</div>
+					<div class="modal-body">
+						<span id="confirmText"></span>
+					</div>
+					<div class="modal-footer">
+						<a class="btn btn-success" href="" id="yesButton">Yes</a>
+						<button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- end dialog delete confirm -->
+		<!-- footer -->
+		<th:block th:include="/footer"></th:block>
+		<!-- end footer -->
+	</div>
+	<script type="text/javascript">
+		$(document).ready(
+				function() {
+					$(".link-delete")
+							.on(
+									"click",
+									function(e) {
+										e.preventDefault();
+										link = $(this);
+										brandId = link.attr("brandId");
+										$("#yesButton").attr("href",
+												link.attr("href"));
+										$("#confirmText").text(
+												"Are you sure delete this brand with ID "
+														+ brandId + "?");
+										$("#confirmModal").modal();
+									});
+				});
+		function clearFilter() {
+			window.location = "[[@{/brands}]]";
+		}
+	</script>
+</body>
+</html>
