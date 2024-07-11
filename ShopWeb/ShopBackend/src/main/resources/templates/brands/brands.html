@@ -32,8 +32,10 @@
 		</div>
 		<div th:if="${message != null}"
 			class="alert alert-success text-center">[[${message}]]</div>
+		<!-- start filter -->
 		<div>
 			<form th:action="@{/brands/page/1}" class="form-inline m-3">
+				<input type="hidden" name="sortField" th:value="${sortField}" />
 				<input type="hidden" name="sortDir" th:value="${sortDir}" />
 				Filter:&nbsp;
 				<input type="search" name="keyword" th:value="${keyword}" class="form-control" required />
@@ -43,16 +45,27 @@
 				<input type="button" value="Clear" class="btn btn-secondary" onclick="clearFilter()" />
 			</form>
 		</div>
+		<!-- end filter -->
+		
 		<div>
 			<table
 				class="table table-bordered table-striped table-hover table-responsive-xl">
 				<thead class="thead-dark">
 					<tr>
-						<th>ID</th>
+						<th>
+							<a th:if="${sortField != 'id'}" th:href="@{'/brands/page/' + ${currentPage} 
+								+ '?sortField=id&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}" class="text-white">Brand ID</a>
+							<a th:if="${sortField == 'id'}" th:href="@{'/brands/page/' + ${currentPage} 
+								+ '?sortField=id&sortDir=' + ${reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}" class="text-white">Brand ID</a> 
+							<span th:if="${sortField == 'id'}" th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}"></span>
+						</th>
 						<th>Logo</th>
-						<th><a class="text-white"
-							th:href="@{'/brands?sortDir=' + ${reverseSortDir}}">Brand Name</a> 
-							<span th:class="${reverseSortDir == 'desc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}"></span>
+						<th>
+							<a th:if="${sortField != 'name'}" th:href="@{'/brands/page/' + ${currentPage} 
+								+ '?sortField=name&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}" class="text-white">Brand Name</a>
+							<a th:if="${sortField == 'name'}" th:href="@{'/brands/page/' + ${currentPage} 
+								+ '?sortField=name&sortDir=' + ${reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}" class="text-white">Brand Name</a> 
+							<span th:if="${sortField == 'name'}" th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}"></span>
 						</th>
 						<th>Categories</th>
 						<th>Action</th>
@@ -79,9 +92,11 @@
 				</tbody>
 			</table>
 		</div>
-		<!-- start paging -->
+		
+		<!-- paging -->
 		<div class="text-center m-1" th:if="${totalItems > 0}">
-			<span>Showing brands</span>
+			<span>Showing brands # [[${startCount}]] to [[${endCount}]] of
+				[[${totalItems}]]</span>
 		</div>
 		<div class="text-center m-1" th:unless="${totalItems > 0}">
 			<span>No brands found</span>
@@ -91,25 +106,28 @@
 				<ul class="pagination justify-content-center">
 					<li
 						th:class="${currentPage > 1 ? 'page-item' : 'page-item disabled'}"><a
-						class="page-link" th:href="@{'/brands/page/1?sortDir=' + ${sortDir}}">First</a></li>
+						class="page-link" th:href="@{'/brands/page/1?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">First</a></li>
 					<li
 						th:class="${currentPage > 1 ? 'page-item' : 'page-item disabled'}"><a
-						class="page-link" th:href="@{'/brands/page/' + ${currentPage - 1} + '?sortDir=' + ${sortDir}}">Previous</a></li>
+						class="page-link" th:href="@{'/brands/page/' + ${currentPage - 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Previous</a></li>
 					<li
 						th:class="${currentPage != i ? 'page-item' : 'page-item active'}"
-						th:each="i : ${#numbers.sequence(1, totalPages)}">
-						<a class="page-link" th:href="@{'/brands/page/' + ${i} + '?sortDir=' + ${sortDir}}">[[${i}]]</a>
+						th:each="i : ${#numbers.sequence(1, totalPages)}"><a th:if="${keyword == null}"
+						class="page-link" th:href="@{'/brands/page/' + ${i} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">[[${i}]]</a>
+						<a th:if="${keyword != null}"
+						class="page-link" th:href="@{'/brands/page/' + ${i} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + '&keyword=' + ${keyword}}">[[${i}]]</a>
 					</li>
 					<li
 						th:class="${currentPage == totalPages ? 'page-item disabled' : 'page-item'}"><a
-						class="page-link" th:href="@{'/brands/page/' + ${currentPage + 1} + '?sortDir=' + ${sortDir}}">Next</a></li>
+						class="page-link" th:href="@{'/brands/page/' + ${currentPage + 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Next</a></li>
 					<li
 						th:class="${currentPage == totalPages ? 'page-item disabled' : 'page-item'}"><a
-						class="page-link" th:href="@{'/brands/page/' + ${totalPages} + '?sortDir=' + ${sortDir}}">Last</a></li>
+						class="page-link" th:href="@{'/brands/page/' + ${totalPages} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Last</a></li>
 				</ul>
 			</nav>
 		</div>
 		<!-- end paging -->
+		
 		<!-- end body -->
 		<!-- start dialog delete confirm-->
 		<div class="modal fade text-center" id="confirmModal">

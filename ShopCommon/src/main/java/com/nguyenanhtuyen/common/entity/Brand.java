@@ -49,6 +49,12 @@ public class Brand {
 		this.logo = "brand-logo.png";
 	}
 	
+	public Brand(Integer id, String name) {
+		this.id = id;
+		this.name = name;
+		this.logo = "brand-logo.png";
+	}
+	
 	@Override
 	public String toString() {
 		return "Brand [id = " + id + ", name = " + name + ", categories = " + categories + "]";

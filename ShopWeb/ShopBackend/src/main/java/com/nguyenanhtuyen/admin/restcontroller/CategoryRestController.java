@@ -1,4 +1,4 @@
-package com.nguyenanhtuyen.admin.controller;
+package com.nguyenanhtuyen.admin.restcontroller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;

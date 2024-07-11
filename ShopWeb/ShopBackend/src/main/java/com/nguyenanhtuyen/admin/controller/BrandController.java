@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -31,9 +33,37 @@ public class BrandController {
 	private CategoryService categoryService;
 	
 	@GetMapping("/brands")
-	public String listAll(Model model) {
-		List<Brand> listBrands = brandService.listAll();
+	public String listFirstPage(Model model) {
+		return listByPage(1, model, "name", "asc", null);
+	}
+	
+	@GetMapping("/brands/page/{pageNumber}")
+	public String listByPage(@PathVariable(name = "pageNumber") int pageNumber, Model model,
+			@Param("sortField") String sortField, @Param("sortDir") String sortDir, @Param("keyword") String keyword) {
+		
+		Page<Brand> page = brandService.listByPage(pageNumber, sortField, sortDir, keyword);
+		List<Brand> listBrands = page.getContent();
+		
+		long startCount = (pageNumber - 1) * BrandService.BRANDS_PER_PAGE + 1;
+		long endCount = startCount + BrandService.BRANDS_PER_PAGE - 1;
+		
+		if (endCount > page.getTotalElements()) {
+			endCount = page.getTotalElements();
+		}
+		
+		String reverseSortDir = sortDir.equals("asc") ? "desc" : "asc";
+		
+		model.addAttribute("currentPage", pageNumber);
+		model.addAttribute("totalPages", page.getTotalPages());
+		model.addAttribute("startCount", startCount);
+		model.addAttribute("endCount", endCount);
+		model.addAttribute("totalItems", page.getTotalElements());
 		model.addAttribute("listBrands", listBrands);
+		model.addAttribute("sortField", sortField);
+		model.addAttribute("sortDir", sortDir);
+		model.addAttribute("reverseSortDir", reverseSortDir);
+		model.addAttribute("keyword", keyword);
+		
 		return "brands/brands";
 	}
 	
@@ -45,7 +75,7 @@ public class BrandController {
 		model.addAttribute("brand", new Brand());
 		model.addAttribute("pageTitle", "Create New Brand");
 		
-		return "brands/brands_form";
+		return "brands/test";
 	}
 	
 	@PostMapping("/brands/save")
@@ -81,7 +111,7 @@ public class BrandController {
 			model.addAttribute("listCategories", listCategories);
 			model.addAttribute("pageTitle", "Update Brand (ID: " + id + ")");
 			
-			return "brands/brands_form";
+			return "brands/test";
 		} catch (BrandNotFoundException ex) {
 			redirectAttributes.addFlashAttribute("message", ex.getMessage());
 			return "redirect:/brands";
