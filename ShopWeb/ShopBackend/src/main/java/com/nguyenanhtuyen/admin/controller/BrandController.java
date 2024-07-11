@@ -17,11 +17,16 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.nguyenanhtuyen.admin.exception.BrandNotFoundException;
+import com.nguyenanhtuyen.admin.exporter.BrandCsvExporter;
+import com.nguyenanhtuyen.admin.exporter.BrandExcelExporter;
+import com.nguyenanhtuyen.admin.exporter.BrandPdfExporter;
 import com.nguyenanhtuyen.admin.service.BrandService;
 import com.nguyenanhtuyen.admin.service.CategoryService;
 import com.nguyenanhtuyen.admin.util.FileUploadUtil;
 import com.nguyenanhtuyen.common.entity.Brand;
 import com.nguyenanhtuyen.common.entity.Category;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
 public class BrandController {
@@ -129,5 +134,26 @@ public class BrandController {
 			redirectAttributes.addFlashAttribute("message", ex.getMessage());
 		}
 		return "redirect:/brands";
+	}
+	
+	@GetMapping("/brands/export/csv")
+	public void exportToCSV(HttpServletResponse response) throws IOException {
+		List<Brand> listBrands = brandService.listAll();
+		BrandCsvExporter exporter = new BrandCsvExporter();
+		exporter.export(listBrands, response);
+	}
+	
+	@GetMapping("/brands/export/excel")
+	public void exportToExcel(HttpServletResponse response) throws IOException {
+		List<Brand> listBrands = brandService.listAll();
+		BrandExcelExporter excelExporter = new BrandExcelExporter();
+		excelExporter.export(listBrands, response);
+	}
+	
+	@GetMapping("/brands/export/pdf")
+	public void exportToPdf(HttpServletResponse response) throws IOException {
+		List<Brand> listBrands = brandService.listAll();
+		BrandPdfExporter pdfExporter = new BrandPdfExporter();
+		pdfExporter.export(listBrands, response);
 	}
 }
