@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+	<div th:fragment="content" th:remove="tag">
+	
+		<!-- start input product name -->
+		<div class="form-group row">
+			<label class="col-sm-2 col-form-label">Product Name:</label>
+			<div class="col-sm-10">
+				<input type="text" class="form-control" th:field="*{name}" required
+					minlength="3" maxlength="256" />
+			</div>
+		</div>
+		<!-- end input product name -->
+		
+		<!-- start input alias -->
+		<div class="form-group row">
+			<label class="col-sm-2 col-form-label">Alias:</label>
+			<div class="col-sm-10">
+				<input type="text" class="form-control" th:field="*{alias}" 
+					placeholder="Default is product name (spaces are replaced by dashes)" 
+					required minlength="3" maxlength="256" />
+			</div>
+		</div>
+		<!-- end input alias -->
+		
+		<!-- start select brand -->
+		<div class="form-group row">
+			<label class="col-sm-2 col-form-label">Brand:</label>
+			<div class="col-sm-10">
+				<select th:field="*{brand}" class="form-control" required>
+					<th:block th:each="brand : ${listBrands}">
+						<option th:value="${brand.id}">[[${brand.name}]]</option>
+					</th:block>
+				</select>
+			</div>
+		</div>
+		<!-- end select brand -->
+		
+		<!-- start select category -->
+		<div class="form-group row">
+			<label class="col-sm-2 col-form-label">Category:</label>
+			<div class="col-sm-10">
+				<select th:field="*{category}" class="form-control" required>
+					
+				</select>
+			</div>
+		</div>
+		<!-- end select category -->
+		
+		<!-- start select enable -->
+		<div class="form-group row">
+			<label class="col-sm-2 col-form-label">Enabled:</label>
+			<div class="col-sm-10">
+				<input type="checkbox" th:field="*{enabled}" />
+			</div>
+		</div>
+		<!-- end input alias -->
+		
+		<!-- start select in-stock -->
+		<div class="form-group row">
+			<label class="col-sm-2 col-form-label">In-stock:</label>
+			<div class="col-sm-10">
+				<input type="checkbox" th:field="*{inStock}" />
+			</div>
+		</div>
+		<!-- end select in-stock -->
+		
+		<!-- start input cost -->
+		<div class="form-group row">
+			<label class="col-sm-2 col-form-label">Cost:</label>
+			<div class="col-sm-10">
+				<input type="number" class="form-control" th:field="*{cost}" />
+			</div>
+		</div>
+		<!-- end input cost -->
+		
+		<!-- start input price -->
+		<div class="form-group row">
+			<label class="col-sm-2 col-form-label">Price:</label>
+			<div class="col-sm-10">
+				<input type="number" class="form-control" th:field="*{price}" />
+			</div>
+		</div>
+		<!-- end input price -->
+		
+		<!-- start input discount -->
+		<div class="form-group row">
+			<label class="col-sm-2 col-form-label">Discount:</label>
+			<div class="col-sm-10">
+				<input type="number" class="form-control" th:field="*{discountPercent}" />
+			</div>
+		</div>
+		<!-- end input discount -->
+	</div>
+</body>
+</html>

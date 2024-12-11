@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+	<div th:fragment="content" th:remove="tag">
+		
+		<br/>
+		<!-- start input length (inch) -->
+		<div class="form-group row">
+			<label class="col-sm-2 col-form-label">Length (inch):</label>
+			<div class="col-sm-10">
+				<input type="number" class="form-control" step="0.01" th:field="*{length}" />
+			</div>
+		</div>
+		<!-- end input length (inch) -->
+		
+		<!-- start input width (inch) -->
+		<div class="form-group row">
+			<label class="col-sm-2 col-form-label">Width (inch):</label>
+			<div class="col-sm-10">
+				<input type="number" class="form-control" step="0.01" th:field="*{width}" />
+			</div>
+		</div>
+		<!-- end input width (inch) -->
+		
+		<!-- start input height (inch) -->
+		<div class="form-group row">
+			<label class="col-sm-2 col-form-label">Height (inch):</label>
+			<div class="col-sm-10">
+				<input type="number" class="form-control" step="0.01" th:field="*{height}" />
+			</div>
+		</div>
+		<!-- end input height (inch) -->
+		
+		<!-- start input weight (inch) -->
+		<div class="form-group row">
+			<label class="col-sm-2 col-form-label">Weight (pounds):</label>
+			<div class="col-sm-10">
+				<input type="number" class="form-control" step="0.01" th:field="*{weight}" />
+			</div>
+		</div>
+		<!-- end input length (inch) -->
+		
+		
+	</div>
+</body>
+</html>
