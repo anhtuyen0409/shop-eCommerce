@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.nguyenanhtuyen.admin.exception.ProductNotFoundException;
 import com.nguyenanhtuyen.admin.repository.ProductPagingRepository;
 import com.nguyenanhtuyen.admin.repository.ProductRepository;
 import com.nguyenanhtuyen.common.entity.Product;
@@ -56,5 +57,17 @@ public class ProductService {
 		}
 		
 		return "OK";
+	}
+	
+	public void updateProductEnabledStatus(Integer id, boolean enabled) {
+		productPagingRepository.updateEnabledStatus(id, enabled);
+	}
+	
+	public void deleteProduct(Integer id) throws ProductNotFoundException {
+		Long countById = productPagingRepository.countById(id);
+		if(countById == null || countById == 0) {
+			throw new ProductNotFoundException("Could not find any product with id " + id);
+		}
+		productRepository.deleteById(id);
 	}
 }
