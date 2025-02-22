@@ -21,6 +21,7 @@
 			<h3 class="text-center">Manage Products | [[${pageTitle}]]</h3>
 		</div>
 		<form th:action="@{/products/save}" method="post" onsubmit="return checkUnique(this)"
+			enctype="multipart/form-data"
 			th:object="${product}">
 			<!-- <input type="hidden" th:field="*{id}" /> -->
 			<div>
@@ -46,7 +47,9 @@
 					<div class="tab-pane" id="description" role="tabpanel">
 						<div th:replace="products/product_description_form :: content"></div>
 					</div>
-					<div class="tab-pane" id="images" role="tabpanel">This images</div>
+					<div class="tab-pane" id="images" role="tabpanel">
+						<div th:replace="products/product_images_form :: content"></div>
+					</div>
 					<div class="tab-pane" id="details" role="tabpanel">This is
 						details</div>
 					<div class="tab-pane" id="shipping" role="tabpanel">
@@ -103,7 +106,27 @@
 			
 			getCategories();
 			
+			$("#fileImage").change(function() {
+				fileSize = this.files[0].size;
+				if(fileSize > 1048576) { // 1MB = 1024 * 1024
+					this.setCustomValidity("You must choose an image less than 1MB!");
+					this.reportValidity();
+				} else {
+					this.setCustomValidity("");
+					showImageThumbnail(this);
+				}
+			});
+			
 		});
+		
+		function showImageThumbnail(fileInput) {
+			var file = fileInput.files[0];
+			var reader = new FileReader();
+			reader.onload = function(e) {
+				$("#thumbnail").attr("src", e.target.result);
+			};
+			reader.readAsDataURL(file);
+		}
 		
 		function getCategories() {
 			brandId = dropdownBrands.val();

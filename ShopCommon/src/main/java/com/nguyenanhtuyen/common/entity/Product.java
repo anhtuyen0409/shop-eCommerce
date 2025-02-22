@@ -14,6 +14,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -85,6 +86,14 @@ public class Product {
 	
 	public void addExtraImage(String imageName) {
 		this.images.add(new ProductImage(imageName, this));
+	}
+	
+	@Transient
+	public String getMainImagePath() {
+		if(this.id == null) {
+			return "/images/image-thumbnail.png";
+		}
+		return "/product-images/product-" + this.id + "/" + this.mainImage;
 	}
 	
 }
